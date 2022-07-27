@@ -6,7 +6,7 @@
 
 ## Project Description
 
-### The cost of living and inflation is on the rise. There is more a demand to purchase a home.
+### The cost of living and inflation is on the rise. The price of rent is also increasing and there is higher demand to purchase a home more than ever. Buyers want to find the home that works best for them. Location and home features can impact the value of the home. We will analayze data of homes that were purchased in the year 2017 from Zillow. The data will be helpful to  determine factors that impact the value of a home. 
 
 ## Initial Questions
 
@@ -51,6 +51,7 @@
 - Generate model predictions by fitting models to only the scaled `train` and `validate` samples to avoid data leakage into `test` sample
 - Evaluate the performance of the models with root mean square error (RMSE) calculation and pick the best performing model
 - Evaluate the performance of best model.
+- Draw conclusion
 
 
 ### Acquistion of zillow family home data
@@ -111,6 +112,61 @@ To split the data
 
 ### Make X_train and y_train
 
-- 
+- Create x_train by using scaled train sample using code:
+     - X_train = train_s.drop(columns=['home_value', 'fips', 'year'])
 
+- Create y-train by using target variable only
+     - y_train = train.home_value
+
+### Modeling the data and evaluating which model performs the best on scaled `train` and `validate` samples
+- from sklearn.linear_model import LinearRegression, LassoLars, TweedieRegressor 
+- Create prediction DataFrames with the actual home value of `train`  and  home value baseline prediction by using the mean of the `home_value` in `train` sample
+- Create prediction DataFrames with the actual home value of `validate` and  home value baseline prediction by using the mean of the `home_value` in `train` sample
+- Create model object and fit model to `x_train` and ` y_train`
+- Use the model object to make prediction on both scaled `train` and `validate` samples by omitting columns 'home_value', 'fips', 'year'.
+- Add model predictions to both prediction dataframes created earlier
+- Evaluate the performce of the models by using root mean square error (RMSE) on the predictions using similar code:
+    - from scipy import stats
+    - from math import sqrt
+    - from sklearn.metrics import mean_squared_error, r2_score, explained_variance_score
+    - train_s_rmse = sqrt(mean_squared_error(home_value_mean['home_value'], home_value_mean.baseline))
+
+    - def calculate_rmse(t):
+        return sqrt(mean_squared_error(home_value_mean['home_value'], t))
+
+    - print('Train baseline RMSE: {}.'.format(train_s_rmse))
+    - home_value_mean.apply(calculate_rmse).sort_values()
+- Review the results and pick the model with the lowest RMSE to run on scaled `test` sample
+
+### Running best model on scaled `test` sample
+
+- Create prediction DataFrame with the actual home value of `train`  and  home value baseline prediction by using the mean of the `home_value` in `train` sample
+- Use the model object to make prediction on  scaled `test`  samples by omitting columns 'home_value', 'fips', 'year'.
+- Add model predictions to both prediction dataframes created earlier
+- Evaluate the performce of the models by using root mean square error (RMSE) on the predictions using similar code:
+    - from scipy import stats
+    - from math import sqrt
+    - from sklearn.metrics import mean_squared_error, r2_score, explained_variance_score
+    - train_s_rmse = sqrt(mean_squared_error(home_value_mean['home_value'], home_value_mean.baseline))
+
+    - def calculate_rmse(t):
+        return sqrt(mean_squared_error(home_value_mean['home_value'], t))
+
+    - print('Train baseline RMSE: {}.'.format(train_s_rmse))
+    - home_value_mean.apply(calculate_rmse).sort_values()
+- Review the results of model performance on scaled `test` sample
+
+### Conclusion
+
+- Summary of the project
+    - After creating three Regression models, the top performing model is LinearRegression (OLS). It beat the baseline prediction (home value average) by $107,522.44. It has an prediction error of $507729.22
+We know square feet, location and added features to the home impact the value of the home.
+
+- Recommendation
+    - To acquire more recent family home data to get a more accurate prediction since the housing market has change since 2017.
+    - Incorporate a cost of living index possible. I believe cost of living impacts the value of the home.
+
+- Next Steps
+    - Create submodels to predict home value buy zipcode to get more accurate predictions
+    - Do feature enginering to create new feature to incorparate in the model.
 
