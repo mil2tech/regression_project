@@ -57,3 +57,13 @@ def scale_data(train, validate, test):
     return train_scaled, validate_scaled, test_scaled
 
 
+# Create x and y train
+#def create_x_y_train():
+    # drop target variable and encoded variable from train sample 
+   # X_train = train_s.drop(columns=['home_value', 'fips', 'year'])
+    
+    # dataframe with the target variable only
+    #y_train = train.home_value
+    #return X_train, y_train
+
+
